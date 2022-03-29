@@ -13,12 +13,12 @@
 </head>
 <body>
 <div class="container">
-    <a th:href = "@{/students}">< Powrót</a>
+    <a th:href = "@{/teachers}">< Powrót</a>
 
-    <h1 th:if="${student.id != null}">Edycja studenta:</h1>
-    <h1 th:if="${student.id == null}">Nowy student:</h1>
+    <h1 th:if="${teacher.id != null}">Edycja nauczyciela:</h1>
+    <h1 th:if="${teacher.id == null}">Nowy nauczyciel:</h1>
 
-    <form action="#" th:action="@{/students/save}" th:object="${student}" method="POST">
+    <form action="#" th:action="@{/teachers/save}" th:object="${teacher}" method="POST">
         <p class="error" th:if="${#fields.hasAnyErrors()}" th:errors="*{all}"></p>
         <span>Imię</span>
         <input type="text" th:field="*{firstName}" class="form-control mb-4 col-4" th:errorClass="error">
@@ -29,7 +29,7 @@
         <span>E-mail</span>
         <input type="text" th:field="*{email}" class="form-control mb-4 col-4" th:errorClass="error">
         <span>Kierunek</span>
-        <input type="text" th:field="*{field}" class="form-control mb-4 col-4" th:errorClass="error">
+        <input type="text" th:field="*{subject}" class="form-control mb-4 col-4" th:errorClass="error">
         <input type="hidden" th:field="*{id}" />
 
         <button type="submit" class="btn btn-primary">Zapisz</button>

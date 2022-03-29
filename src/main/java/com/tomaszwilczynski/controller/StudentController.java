@@ -58,11 +58,11 @@ public class StudentController {
     @GetMapping("/edit/{studentId}")
     public String editStudent(@PathVariable long studentId, Model model) {
         var student = studentRepository.findById(studentId);
-        model.addAttribute("student", student);
+        student.ifPresent(s -> model.addAttribute("student", s));
         return "editStudent";
     }
 
-    @GetMapping("/page/{pageNr}")
+    @GetMapping(value ="/page/{pageNr}", params = {"!teacherId"})
     public String getStudents(@PathVariable Integer pageNr,
                               @RequestParam("sortField") String sortField,
                               @RequestParam("sortDir") String sortDir,

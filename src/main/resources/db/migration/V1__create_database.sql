@@ -19,17 +19,17 @@ create table teachers (
     subject varchar(255)
 );
 
-create table teacher_student_relationship (
+create table teachers_students (
     teacher_id bigint not null,
     student_id bigint not null,
     primary key (teacher_id, student_id)
 );
 
-alter table teacher_student_relationship
+alter table teachers_students
     add constraint fk_teacher
         foreign key (teacher_id) references teachers(id);
 
-alter table teacher_student_relationship
+alter table teachers_students
     add constraint fk_student
         foreign key (student_id) references students(id);
 
