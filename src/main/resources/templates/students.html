@@ -9,48 +9,15 @@
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
           crossorigin="anonymous">
 
-    <style>
-        .gray-border {border: 2px solid #dee2e6;}
-        .header-active {color:yellowgreen;}
-        .header-active:hover {color:yellowgreen;}
-        .header-inactive {color:#007bff;}
-        .page-numbers {display:inline;}
-        .margin-left {margin-left: 15px;}
-        .margin-right {margin-right: 15px;}
-        .margin-leftright {margin-left: 8px; margin-right: 8px;}
-
-        .table-container {
-            width: 1100px;
-            padding-right: 15px;
-            padding-left: 15px;
-            margin-right: auto;
-            margin-left: auto;
-        }
-        .ten {width: 10%;}
-        .fifteen {width: 15%;}
-        .twenty {width: 20%;}
-        .thirty {width: 30%;}
-        h1 {
-            margin-top: 20px;
-        }
-        td{
-            vertical-align: middle !important;
-        }
-        .table-content {
-            table-layout:fixed !important;
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-        .table-content tbody tr:nth-child(odd) {
-            background-color: rgb(240, 240, 240);
-        }
-    </style>
+    <link rel="stylesheet"  href="/students-teachers.css">
 
 </head>
 <body>
 
     <div class="table-container">
         <h1>Lista studentów:</h1>
+
+        <a th:href = "@{/students/new}" class="btn btn-primary btn-sm mb-3">Nowy student</a>
 
         <table class = "table-content table gray-border">
             <colgroup>
@@ -106,9 +73,9 @@
                     <td th:text="${student.email}"></td>
                     <td th:text="${student.field}"></td>
                     <td>
-                        <a th:href="@{/updateStudent/{id}(id=${student.id})}" class="btn btn-primary">Edytuj</a>
+                        <a th:href="@{/students/edit/{id}(id=${student.id})}" class="btn btn-primary">Edytuj</a>
                         <a th:href="@{/teachers/{steudentId}(steudentId=${student.id})}" class="btn btn-primary">Nauczyciele</a>
-                        <a th:href="@{/updateStudent/{id}(id=${student.id})}" class="btn btn-danger">Usuń</a>
+                        <a th:href="@{/students/delete/{id}(id=${student.id})}" class="btn btn-danger">Usuń</a>
                     </td>
                 </tr>
             </tbody>

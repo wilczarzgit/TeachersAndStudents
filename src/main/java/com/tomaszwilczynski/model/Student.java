@@ -1,52 +1,19 @@
 package com.tomaszwilczynski.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
 @Entity
 @Table(name = "students")
-public class Student extends BaseEntity{
-    private String firstName;
-    private String secondName;
-    private int age;
-    private String email;
+public class Student extends PhysicalEntity {
+    @NotBlank(message = "Kierunek jest wymagany.")
     private String field;
+
     @ManyToMany(mappedBy = "students")
     private Set<Teacher> teachers;
 
     public Student() {
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getSecondName() {
-        return secondName;
-    }
-
-    public void setSecondName(String secondName) {
-        this.secondName = secondName;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getField() {

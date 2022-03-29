@@ -1,5 +1,6 @@
-package com.tomaszwilczynski.model;
+package com.tomaszwilczynski.repository;
 
+import com.tomaszwilczynski.model.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
