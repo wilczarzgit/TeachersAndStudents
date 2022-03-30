@@ -15,18 +15,9 @@
 <body>
 
     <div class="table-container">
-        <h1>Lista nauczycieli:</h1>
+        <a th:href = "@{/students}">< Powrót</a>
+        <h1 th:text="|Lista nauczycieli studenta ${student.firstName} ${student.secondName}:|"></h1>
 
-        <a th:href = "@{/teachers/new}" class="btn btn-primary">Nowy nauczyciel</a>
-        <br/><br/>
-
-        <form action="#" th:action="@{/teachers/search}"  method="POST">
-
-            <input type="text" th:value="${firstName}" name="firstName" placeholder="Imię" class="form-control" style="display:inline-block; width:200px;">
-            <input type="text" th:value="${secondName}" name="secondName" placeholder="Nazwisko" class="form-control" style="display:inline-block; width:200px;">
-
-            <button type="submit" class="btn btn-primary">Szukaj</button>
-        </form>
 
         <table class = "table-content table gray-border">
             <colgroup>
@@ -75,18 +66,17 @@
             </thead>
 
             <tbody>
-                <tr th:each="teacher : ${teachers}">
-                    <td th:text="${teacher.firstName}"></td>
-                    <td th:text="${teacher.secondName}"></td>
-                    <td th:text="${teacher.age}"></td>
-                    <td th:text="${teacher.email}"></td>
-                    <td th:text="${teacher.subject}"></td>
-                    <td>
-                        <a th:href="@{/teachers/edit/{id}(id=${teacher.id})}" class="btn btn-primary">Edytuj</a>
-                        <a th:href="@{/students/of/{teacherId}(teacherId=${teacher.id})}" class="btn btn-primary">Uczniowie</a>
-                        <a th:href="@{/teachers/delete/{id}(id=${teacher.id})}" class="btn btn-danger">Usuń</a>
-                    </td>
-                </tr>
+            <tr th:each="teacher : ${teachers}">
+                <td th:text="${teacher.firstName}"></td>
+                <td th:text="${teacher.secondName}"></td>
+                <td th:text="${teacher.age}"></td>
+                <td th:text="${teacher.email}"></td>
+                <td th:text="${teacher.subject}"></td>
+                <td>
+                    <a th:href="@{'/teachers/unlink?teacherId=' + ${teacher.id} + '&studentId=' + ${student.id}}" class="btn btn-danger">Odepnij</a>
+                </td>
+
+            </tr>
             </tbody>
         </table>
 
@@ -97,18 +87,21 @@
                 </div>
                 <div class="page-numbers">
 					<span th:each="i: ${#numbers.sequence(1, totalPages)}" class="margin-leftright">
-						<a th:if="${currentPage != i}" th:href="@{'/teachers/page/' + ${i}+ '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">[[${i}]]</a>
+						<a th:if="${currentPage != i}"
+                           th:href="@{'/teachers/of/' + ${student.id} + '/page/' + ${i}+ '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">[[${i}]]</a>
 						<span th:unless="${currentPage != i}">[[${i}]]</span>
 					</span>
                 </div>
                 <div class="page-numbers margin-leftright">
                     &nbsp;
-                    <a th:if="${currentPage < totalPages}" th:href="@{'/teachers/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Następna</a>
+                    <a th:if="${currentPage < totalPages}"
+                       th:href="@{'/teachers/of/' + ${student.id} + '/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Następna</a>
                     <span th:unless="${currentPage < totalPages}">Następna</span>
                 </div>
 
                 <div class="page-numbers">
-                    <a th:if="${currentPage < totalPages}" th:href="@{'/teacher/page/' + ${totalPages}+ '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Ostatnia</a>
+                    <a th:if="${currentPage < totalPages}"
+                       th:href="@{'/teacher/of/' + ${student.id} + '/page/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Ostatnia</a>
                     <span th:unless="${currentPage < totalPages}">Ostatnia</span>
                 </div>
             </div>

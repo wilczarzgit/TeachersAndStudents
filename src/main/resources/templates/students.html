@@ -84,7 +84,7 @@
                     <td th:text="${student.field}"></td>
                     <td>
                         <a th:href="@{/students/edit/{id}(id=${student.id})}" class="btn btn-primary">Edytuj</a>
-                        <a th:href="@{/teachers?studentId={studentId}(studentId=${student.id})}" class="btn btn-primary">Nauczyciele</a>
+                        <a th:href="@{/teachers/of/{studentId}(studentId=${student.id})}" class="btn btn-primary">Nauczyciele</a>
                         <a th:href="@{/students/delete/{id}(id=${student.id})}" class="btn btn-danger">Usuń</a>
                     </td>
                 </tr>

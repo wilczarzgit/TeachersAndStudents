@@ -1,6 +1,7 @@
 package com.tomaszwilczynski.controller;
 
 import com.tomaszwilczynski.model.Teacher;
+import com.tomaszwilczynski.repository.StudentRepository;
 import com.tomaszwilczynski.repository.TeacherRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +19,12 @@ import javax.validation.Valid;
 @RequestMapping("/teachers")
 public class TeacherController {
     private TeacherRepository teacherRepository;
+    private StudentRepository studentRepository;
     private Logger logger = LoggerFactory.getLogger(TeacherController.class);
 
-    public TeacherController(TeacherRepository teacherRepository) {
+    public TeacherController(TeacherRepository teacherRepository, StudentRepository studentRepository) {
         this.teacherRepository = teacherRepository;
+        this.studentRepository = studentRepository;
     }
 
     @GetMapping
@@ -88,6 +91,41 @@ public class TeacherController {
         model.addAttribute("secondName", secondName);
         fillPagedModel(model, page, 1, "secondName", "asc");
         return "teachers";
+    }
+
+    @GetMapping("/of/{studentId}")
+    public String viewTeachersOfStudent(@PathVariable Long studentId,
+                                        Model model) {
+        return getTeachersOfStudent(studentId, 1, "secondName", "asc", model);
+    }
+
+    @GetMapping("/of/{studentId}/page/{pageNr}")
+    public String getTeachersOfStudent(@PathVariable Long studentId,
+                                       @PathVariable Integer pageNr,
+                                       @RequestParam("sortField") String sortField,
+                                       @RequestParam("sortDir") String sortDir,
+                                       Model model) {
+        var sort = Sort.by("secondName").ascending();
+        var pageable = PageRequest.of(pageNr - 1, 5, sort);
+        var page = teacherRepository.findByStudents_Id(studentId, pageable);
+
+        var student = studentRepository.findById(studentId);
+        student.ifPresent(s -> model.addAttribute("student", s) );
+        fillPagedModel(model, page, pageNr, sortField, sortDir);
+        return "teachersOfStudent";
+    }
+
+    @GetMapping("/unlink")
+    public String unlinkStudent(@RequestParam Long studentId,
+                                @RequestParam Long teacherId,
+                                Model model) {
+        var teacher = teacherRepository.findById(teacherId);
+        var student = studentRepository.findById(studentId);
+        if(student.isPresent() && teacher.isPresent()) {
+            teacher.get().getStudents().remove(student.get());
+            teacherRepository.save(teacher.get());
+        }
+        return viewTeachersOfStudent(studentId, model);
     }
 
     private void fillPagedModel(Model model, Page<Teacher> page, Integer pageNr, String sortField, String sortDir) {
