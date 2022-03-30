@@ -74,7 +74,7 @@ public class StudentController {
         var sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
         var pageable = PageRequest.of(pageNr - 1, 5, sort);
         var studentPage = studentRepository.findAll(pageable);
-        fillPagedModel(model, studentPage, pageNr, sortField, sortDir);
+        addPageToModel(model, studentPage, pageNr, sortField, sortDir);
         return "students";
     }
 
@@ -88,7 +88,7 @@ public class StudentController {
 
         model.addAttribute("firstName", firstName);
         model.addAttribute("secondName", secondName);
-        fillPagedModel(model, studentPage, 1, "secondName", "desc");
+        addPageToModel(model, studentPage, 1, "secondName", "desc");
         return "students";
     }
 
@@ -110,7 +110,8 @@ public class StudentController {
 
         var teacher = teacherRepository.findById(teacherId);
         teacher.ifPresent(t -> model.addAttribute("teacher", t) );
-        fillPagedModel(model, page, pageNr, sortField, sortDir);
+        addPageToModel(model, page, pageNr, sortField, sortDir);
+
         return "studentsOfTeacher";
     }
 
@@ -127,7 +128,7 @@ public class StudentController {
         return viewStudentsOfTeacher(teacherId, model);
     }
 
-    private void fillPagedModel(Model model, Page<Student> page, Integer pageNr, String sortField, String sortDir) {
+    private void addPageToModel(Model model, Page<Student> page, Integer pageNr, String sortField, String sortDir) {
         model.addAttribute("students", page.getContent());
         model.addAttribute("currentPage", pageNr);
         model.addAttribute("totalPages", page.getTotalPages());
