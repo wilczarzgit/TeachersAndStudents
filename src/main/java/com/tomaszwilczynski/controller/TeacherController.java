@@ -25,7 +25,7 @@ public class TeacherController {
 
     @GetMapping
     public String viewTeachers(Model model) {
-        return getteachers(1, "secondName", "asc", model);
+        return getTeachers(1, "secondName", "asc", model);
     }
 
     @GetMapping("/new")
@@ -63,7 +63,7 @@ public class TeacherController {
     }
 
     @GetMapping("/page/{pageNr}")
-    public String getteachers(@PathVariable Integer pageNr,
+    public String getTeachers(@PathVariable Integer pageNr,
                               @RequestParam("sortField") String sortField,
                               @RequestParam("sortDir") String sortDir,
                               Model model) {
@@ -83,6 +83,28 @@ public class TeacherController {
         model.addAttribute("sortDir", sortDir);
         model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
 
+        return "teachers";
+    }
+
+    @PostMapping("/search")
+    public String searchTeachers(@RequestParam String firstName,
+                                 @RequestParam String secondName,
+                                 Model model) {
+        var sort = Sort.by("secondName").ascending();
+        var pageable = PageRequest.of(0, 5, sort);
+        var studentPage = teacherRepository.findByFirstNameContainingAndSecondNameContaining(firstName, secondName, pageable);
+
+        model.addAttribute("firstName", firstName);
+        model.addAttribute("secondName", secondName);
+
+        model.addAttribute("teachers", studentPage.getContent());
+        model.addAttribute("currentPage", 1);
+        model.addAttribute("totalPages", studentPage.getTotalPages());
+        model.addAttribute("totalItems", studentPage.getTotalElements());
+
+        model.addAttribute("sortField", "secondName");
+        model.addAttribute("sortDir", "asc");
+        model.addAttribute("reverseSortDir", "desc");
         return "teachers";
     }
 }

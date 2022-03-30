@@ -17,7 +17,17 @@
     <div class="table-container">
         <h1>Lista studentów:</h1>
 
-        <a th:href = "@{/students/new}" class="btn btn-primary btn-sm mb-3">Nowy student</a>
+        <a th:href = "@{/students/new}" class="btn btn-primary">Nowy student</a>
+        <br/><br/>
+
+        <form action="#" th:action="@{/students/search}"  method="POST">
+
+            <input type="text" th:value="${firstName}" name="firstName" placeholder="Imię" class="form-control" style="display:inline-block; width:200px;">
+            <input type="text" th:value="${secondName}" name="secondName" placeholder="Nazwisko" class="form-control" style="display:inline-block; width:200px;">
+
+            <button type="submit" class="btn btn-primary">Szukaj</button>
+        </form>
+
 
         <table class = "table-content table gray-border">
             <colgroup>

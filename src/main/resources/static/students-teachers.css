@@ -43,13 +43,19 @@ td{
 }
 .table-content {
     table-layout:fixed !important;
-    margin-top: 0px;
+    margin-top: 20px;
     margin-bottom: 20px;
 }
 .table-content tbody tr:nth-child(odd) {
     background-color: rgb(240, 240, 240);
 }
+
 .error {
     color: red;
     border-color: red;
+}
+
+.inline-input {
+    display:inline-block;
+    width:200px;
 }
