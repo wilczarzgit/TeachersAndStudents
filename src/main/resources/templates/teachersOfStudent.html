@@ -57,7 +57,7 @@
                 </th>
                 <th>
                     <a th:class="|header-${sortField == 'field' ? 'active' : 'inactive'}|"
-                       th:href="@{'/teachers/page/' + ${currentPage} + '?sortField=field&sortDir=' + ${sortField == 'field' ? reverseSortDir : 'asc'}}">Kierunek</a>
+                       th:href="@{'/teachers/page/' + ${currentPage} + '?sortField=field&sortDir=' + ${sortField == 'field' ? reverseSortDir : 'asc'}}">Przedmiot</a>
                     <span th:if="${sortField == 'field' && sortDir == 'asc'}" class="header-active">▼</span>
                     <span th:if="${sortField == 'field' && sortDir == 'desc'}" class="header-active">▲</span>
                 </th>
