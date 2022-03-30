@@ -4,6 +4,7 @@ import com.tomaszwilczynski.model.Teacher;
 import com.tomaszwilczynski.repository.TeacherRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -68,21 +69,10 @@ public class TeacherController {
                               @RequestParam("sortDir") String sortDir,
                               Model model) {
 
-        var sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() :
-                Sort.by(sortField).descending();
-
+        var sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
         var pageable = PageRequest.of(pageNr - 1, 5, sort);
-        var teacherPage = teacherRepository.findAll(pageable);
-
-        model.addAttribute("teachers", teacherPage.getContent());
-        model.addAttribute("currentPage", pageNr);
-        model.addAttribute("totalPages", teacherPage.getTotalPages());
-        model.addAttribute("totalItems", teacherPage.getTotalElements());
-
-        model.addAttribute("sortField", sortField);
-        model.addAttribute("sortDir", sortDir);
-        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
-
+        var page = teacherRepository.findAll(pageable);
+        fillPagedModel(model, page, pageNr, sortField, sortDir);
         return "teachers";
     }
 
@@ -92,19 +82,21 @@ public class TeacherController {
                                  Model model) {
         var sort = Sort.by("secondName").ascending();
         var pageable = PageRequest.of(0, 5, sort);
-        var studentPage = teacherRepository.findByFirstNameContainingAndSecondNameContaining(firstName, secondName, pageable);
+        var page = teacherRepository.findByFirstNameContainingAndSecondNameContaining(firstName, secondName, pageable);
 
         model.addAttribute("firstName", firstName);
         model.addAttribute("secondName", secondName);
-
-        model.addAttribute("teachers", studentPage.getContent());
-        model.addAttribute("currentPage", 1);
-        model.addAttribute("totalPages", studentPage.getTotalPages());
-        model.addAttribute("totalItems", studentPage.getTotalElements());
-
-        model.addAttribute("sortField", "secondName");
-        model.addAttribute("sortDir", "asc");
-        model.addAttribute("reverseSortDir", "desc");
+        fillPagedModel(model, page, 1, "secondName", "asc");
         return "teachers";
+    }
+
+    private void fillPagedModel(Model model, Page<Teacher> page, Integer pageNr, String sortField, String sortDir) {
+        model.addAttribute("teachers", page.getContent());
+        model.addAttribute("currentPage", pageNr);
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("totalItems", page.getTotalElements());
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
     }
 }
