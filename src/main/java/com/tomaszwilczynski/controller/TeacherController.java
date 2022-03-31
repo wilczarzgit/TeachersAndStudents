@@ -156,7 +156,7 @@ public class TeacherController {
             teacherRepository.save(teacher.get());
             logger.info("Utworzono połączenie pomiędzy nauczycielem {} a studentem {}", teacherId, studentId);
         }
-        return viewTeachersOfStudent(teacherId, model);
+        return viewTeachersOfStudent(studentId, model);
     }
 
     private void addPageToModel(Model model, Page<Teacher> page, Integer pageNr, String sortField, String sortDir) {
