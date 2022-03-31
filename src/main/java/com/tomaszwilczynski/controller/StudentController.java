@@ -155,16 +155,16 @@ public class StudentController {
         if(student.isPresent() && teacher.isPresent()) {
             teacher.get().getStudents().add(student.get());
             teacherRepository.save(teacher.get());
-            logger.info("Utworzono połączenie pomiędzy nauczycielem {} a studentem {}", teacherId, studentId);
+            logger.info("Utworzono połączenie pomiędzy nauczycielem {} a studentem {} ", teacherId, studentId);
         }
         return viewStudentsOfTeacher(teacherId, model);
     }
 
     private void addPageToModel(Model model, Page<Student> page, Integer pageNr, String sortField, String sortDir) {
         model.addAttribute("students", page.getContent());
+        model.addAttribute("totalItems", page.getTotalElements());
         model.addAttribute("currentPage", pageNr);
         model.addAttribute("totalPages", page.getTotalPages());
-        model.addAttribute("totalItems", page.getTotalElements());
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
         model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");

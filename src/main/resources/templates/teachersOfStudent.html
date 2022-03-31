@@ -20,12 +20,12 @@
 
         <table class = "table-content table gray-border">
             <colgroup>
-                <col class="ten" />
                 <col class="fifteen" />
+                <col class="twenty" />
                 <col class="ten" />
                 <col class="twenty" />
+                <col class="twenty" />
                 <col class="fifteen" />
-                <col class="thirty" />
             </colgroup>
 
             <thead>
@@ -79,7 +79,7 @@
             </tbody>
         </table>
 
-        <div th:if = "${totalPages > 1}">
+        <div th:if = "${totalPages > 1}" style="margin-bottom:20px">
             <div>
                 <div class="page-numbers margin-right">
                     Wszystkich wierszów: [[${totalItems}]]
