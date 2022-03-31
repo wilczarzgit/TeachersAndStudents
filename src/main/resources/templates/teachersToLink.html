@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Nauczyciele</title>
+    <title>Studenci</title>
 
     <link rel="stylesheet"
           href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
@@ -15,9 +15,8 @@
 <body>
 
 <div class="table-container">
-    <a th:href = "@{/teachers}">< Powrót</a>
-    <h1 th:text="|Lista studentów nauczyciela ${teacher.firstName} ${teacher.secondName}:|"></h1>
-
+    <a th:href = "@{/teachers/of/{studentId}(studentId=${student.id})}">< Powrót</a>
+    <h2>Wybierz nauczyciela do podpięcia:</h2>
 
     <table class = "table-content table gray-border">
         <colgroup>
@@ -33,49 +32,49 @@
         <tr>
             <th>
                 <a th:class="|header-${sortField == 'firstName' ? 'active' : 'inactive'}|"
-                   th:href="@{'/students/of/' + ${teacher.id} + '/page/' + ${currentPage} + '?sortField=firstName&sortDir=' + ${sortField == 'firstName' ? reverseSortDir : 'asc'}}">Imię</a>
+                   th:href="@{'/teachers/link/page/' + ${currentPage} + '?studentId=' + ${student.id} + '&sortField=firstName&sortDir=' + ${sortField == 'firstName' ? reverseSortDir : 'asc'}}">Imię</a>
                 <span th:if="${sortField == 'firstName' && sortDir == 'asc'}" class="header-active">▼</span>
                 <span th:if="${sortField == 'firstName' && sortDir == 'desc'}" class="header-active">▲</span>
             </th>
             <th>
                 <a th:class="|header-${sortField == 'secondName' ? 'active' : 'inactive'}|"
-                   th:href="@{'/students/of/' + ${teacher.id} + '/page/' + ${currentPage} + '?sortField=secondName&sortDir=' + ${sortField == 'secondName' ? reverseSortDir : 'asc'}}">Nazwisko</a>
+                   th:href="@{'/teachers/link/page/' + ${currentPage} + '?studentId=' + ${student.id} + '&sortField=secondName&sortDir=' + ${sortField == 'secondName' ? reverseSortDir : 'asc'}}">Nazwisko</a>
                 <span th:if="${sortField == 'secondName' && sortDir == 'asc'}" class="header-active">▼</span>
                 <span th:if="${sortField == 'secondName' && sortDir == 'desc'}" class="header-active">▲</span>
             </th>
             <th>
                 <a th:class="|header-${sortField == 'age' ? 'active' : 'inactive'}|"
-                   th:href="@{'/students/of/' + ${teacher.id} + '/page/' + ${currentPage} + '?sortField=age&sortDir=' + ${sortField == 'age' ? reverseSortDir : 'asc'}}">Wiek</a>
+                   th:href="@{'/teachers/link/page/' + ${currentPage} + '?studentId=' + ${student.id} + '&sortField=age&sortDir=' + ${sortField == 'age' ? reverseSortDir : 'asc'}}">Wiek</a>
                 <span th:if="${sortField == 'age' && sortDir == 'asc'}" class="header-active">▼</span>
                 <span th:if="${sortField == 'age' && sortDir == 'desc'}" class="header-active">▲</span>
             </th>
             <th>
                 <a th:class="|header-${sortField == 'email' ? 'active' : 'inactive'}|"
-                   th:href="@{'/students/of/' + ${teacher.id} + '/page/' + ${currentPage} + '?sortField=email&sortDir=' + ${sortField == 'email' ? reverseSortDir : 'asc'}}">Email</a>
+                   th:href="@{'/teachers/link/page/' + ${currentPage} + '?studentId=' + ${student.id} + '&sortField=email&sortDir=' + ${sortField == 'email' ? reverseSortDir : 'asc'}}">Email</a>
                 <span th:if="${sortField == 'email' && sortDir == 'asc'}" class="header-active">▼</span>
                 <span th:if="${sortField == 'email' && sortDir == 'desc'}" class="header-active">▲</span>
             </th>
             <th>
-                <a th:class="|header-${sortField == 'field' ? 'active' : 'inactive'}|"
-                   th:href="@{'/students/of/' + ${teacher.id} + '/page/' + ${currentPage} + '?sortField=field&sortDir=' + ${sortField == 'field' ? reverseSortDir : 'asc'}}">Kierunek</a>
-                <span th:if="${sortField == 'field' && sortDir == 'asc'}" class="header-active">▼</span>
-                <span th:if="${sortField == 'field' && sortDir == 'desc'}" class="header-active">▲</span>
+                <a th:class="|header-${sortField == 'subject' ? 'active' : 'inactive'}|"
+                   th:href="@{'/teachers/link/page/' + ${currentPage} + '?studentId=' + ${student.id} + '&sortField=subject&sortDir=' + ${sortField == 'subject' ? reverseSortDir : 'asc'}}">Przedmiot</a>
+                <span th:if="${sortField == 'subject' && sortDir == 'asc'}" class="header-active">▼</span>
+                <span th:if="${sortField == 'subject' && sortDir == 'desc'}" class="header-active">▲</span>
             </th>
             <th>Akcje</th>
         </tr>
         </thead>
 
         <tbody>
-        <tr th:each="student : ${students}">
-            <td th:text="${student.firstName}"></td>
-            <td th:text="${student.secondName}"></td>
-            <td th:text="${student.age}"></td>
-            <td th:text="${student.email}"></td>
-            <td th:text="${student.field}"></td>
+        <tr th:each="teacher : ${teachers}">
+            <td th:text="${teacher.firstName}"></td>
+            <td th:text="${teacher.secondName}"></td>
+            <td th:text="${teacher.age}"></td>
+            <td th:text="${teacher.email}"></td>
+            <td th:text="${teacher.subject}"></td>
             <td>
-                <a th:href="@{'/students/unlink?teacherId=' + ${teacher.id} + '&studentId=' + ${student.id}}" class="btn btn-danger">Odepnij</a>
+                <div th:if="${#sets.contains(student.teachers, teacher)}">Przypięto</div>
+                <a th:if="${!#sets.contains(student.teachers, teacher)}" th:href="@{'/teachers/finalizeLink?studentId=' + ${student.id} + '&teacherId=' + ${teacher.id}}" class="btn btn-primary">Przypnij</a>
             </td>
-
         </tr>
         </tbody>
     </table>
@@ -87,27 +86,23 @@
             </div>
             <div class="page-numbers">
 					<span th:each="i: ${#numbers.sequence(1, totalPages)}" class="margin-leftright">
-						<a th:if="${currentPage != i}"
-                           th:href="@{'/students/of/' + ${teacher.id} + '/page/' + ${i}+ '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">[[${i}]]</a>
+						<a th:if="${currentPage != i}" th:href="@{'/teachers/link/page/' + ${i}+ '?studentId=' + ${student.id} +'&sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">[[${i}]]</a>
 						<span th:unless="${currentPage != i}">[[${i}]]</span>
 					</span>
             </div>
             <div class="page-numbers margin-leftright">
                 &nbsp;
-                <a th:if="${currentPage < totalPages}"
-                   th:href="@{'/students/of/' + ${teacher.id} + '/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Następna</a>
+                <a th:if="${currentPage < totalPages}" th:href="@{'/teachers/link/page/' + ${currentPage + 1} + '?studentId=' + ${student.id} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Następna</a>
                 <span th:unless="${currentPage < totalPages}">Następna</span>
             </div>
 
             <div class="page-numbers">
-                <a th:if="${currentPage < totalPages}"
-                   th:href="@{'/students/of/' + ${teacher.id} + '/page/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Ostatnia</a>
+                <a th:if="${currentPage < totalPages}" th:href="@{'/teachers/link/page/' + ${totalPages} + '?studentId=' + ${student.id} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}">Ostatnia</a>
                 <span th:unless="${currentPage < totalPages}">Ostatnia</span>
             </div>
+
         </div>
     </div>
-
-    <a th:href = "@{'/students/link?teacherId=' + ${teacher.id}}" class="btn btn-primary">Przypnij studenta</a>
 
 </div>
 </body>

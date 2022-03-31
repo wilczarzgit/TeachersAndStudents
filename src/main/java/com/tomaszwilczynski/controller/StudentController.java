@@ -81,7 +81,7 @@ public class StudentController {
     @PostMapping("/search")
     public String searchStudents(@RequestParam String firstName,
                                  @RequestParam String secondName,
-                               Model model) {
+                                 Model model) {
         var sort = Sort.by("secondName").ascending();
         var pageable = PageRequest.of(0, 5, sort);
         var studentPage = studentRepository.findByFirstNameContainingAndSecondNameContaining(firstName, secondName, pageable);
@@ -93,25 +93,22 @@ public class StudentController {
     }
 
     @GetMapping("/of/{teacherId}")
-    public String viewStudentsOfTeacher(@PathVariable Long teacherId,
-                                        Model model) {
-        return getStudentsOfTeacher(teacherId, 1, "secondName", "asc", model);
+    public String viewStudentsOfTeacher(@PathVariable Long teacherId, Model model) {
+        return viewStudentsOfTeacherPaged(teacherId, 1, "secondName", "asc", model);
     }
 
     @GetMapping("/of/{teacherId}/page/{pageNr}")
-    public String getStudentsOfTeacher(@PathVariable Long teacherId,
-                                       @PathVariable Integer pageNr,
-                                       @RequestParam("sortField") String sortField,
-                                       @RequestParam("sortDir") String sortDir,
-                                       Model model) {
-        var sort = Sort.by("secondName").ascending();
+    public String viewStudentsOfTeacherPaged(@PathVariable Long teacherId,
+                                             @PathVariable Integer pageNr,
+                                             @RequestParam("sortField") String sortField,
+                                             @RequestParam("sortDir") String sortDir,
+                                             Model model) {
+        var sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
         var pageable = PageRequest.of(pageNr - 1, 5, sort);
         var page = studentRepository.findByTeachers_Id(teacherId, pageable);
-
         var teacher = teacherRepository.findById(teacherId);
         teacher.ifPresent(t -> model.addAttribute("teacher", t) );
         addPageToModel(model, page, pageNr, sortField, sortDir);
-
         return "studentsOfTeacher";
     }
 
@@ -124,6 +121,41 @@ public class StudentController {
         if(student.isPresent() && teacher.isPresent()) {
             teacher.get().getStudents().remove(student.get());
             teacherRepository.save(teacher.get());
+            logger.info("Usunięto połączenie pomiędzy nauczycielem {} a studentem {}", teacherId, studentId);
+        }
+        return viewStudentsOfTeacher(teacherId, model);
+    }
+
+    @GetMapping("/link")
+    public String prepareToLinkStudentAndTeacher(@RequestParam Long teacherId, Model model) {
+        return prepareToLinkStudentAndTeacherPaged(teacherId, 1, "secondName", "asc", model);
+    }
+
+    @GetMapping("/link/page/{pageNr}")
+    public String prepareToLinkStudentAndTeacherPaged(@RequestParam Long teacherId,
+                                                      @PathVariable Integer pageNr,
+                                                      @RequestParam("sortField") String sortField,
+                                                      @RequestParam("sortDir") String sortDir,
+                                                      Model model) {
+        var sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
+        var pageable = PageRequest.of(pageNr - 1, 5, sort);
+        var page = studentRepository.findAll(pageable);
+        var teacher = teacherRepository.findById(teacherId);
+        teacher.ifPresent(t -> model.addAttribute("teacher", t) );
+        addPageToModel(model, page, pageNr, sortField, sortDir);
+        return "studentsToLink";
+    }
+
+    @GetMapping("/finalizeLink")
+    public String linkStudentAndTeacher(@RequestParam Long teacherId,
+                                        @RequestParam Long studentId,
+                                        Model model) {
+        var student = studentRepository.findById(studentId);
+        var teacher = teacherRepository.findById(teacherId);
+        if(student.isPresent() && teacher.isPresent()) {
+            teacher.get().getStudents().add(student.get());
+            teacherRepository.save(teacher.get());
+            logger.info("Utworzono połączenie pomiędzy nauczycielem {} a studentem {}", teacherId, studentId);
         }
         return viewStudentsOfTeacher(teacherId, model);
     }
@@ -137,5 +169,4 @@ public class StudentController {
         model.addAttribute("sortDir", sortDir);
         model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
     }
-
 }

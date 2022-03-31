@@ -71,7 +71,6 @@ public class TeacherController {
                               @RequestParam("sortField") String sortField,
                               @RequestParam("sortDir") String sortDir,
                               Model model) {
-
         var sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
         var pageable = PageRequest.of(pageNr - 1, 5, sort);
         var page = teacherRepository.findAll(pageable);
@@ -94,21 +93,19 @@ public class TeacherController {
     }
 
     @GetMapping("/of/{studentId}")
-    public String viewTeachersOfStudent(@PathVariable Long studentId,
-                                        Model model) {
-        return getTeachersOfStudent(studentId, 1, "secondName", "asc", model);
+    public String viewTeachersOfStudent(@PathVariable Long studentId, Model model) {
+        return viewTeachersOfStudentPaged(studentId, 1, "secondName", "asc", model);
     }
 
     @GetMapping("/of/{studentId}/page/{pageNr}")
-    public String getTeachersOfStudent(@PathVariable Long studentId,
-                                       @PathVariable Integer pageNr,
-                                       @RequestParam("sortField") String sortField,
-                                       @RequestParam("sortDir") String sortDir,
-                                       Model model) {
-        var sort = Sort.by("secondName").ascending();
+    public String viewTeachersOfStudentPaged(@PathVariable Long studentId,
+                                             @PathVariable Integer pageNr,
+                                             @RequestParam("sortField") String sortField,
+                                             @RequestParam("sortDir") String sortDir,
+                                             Model model) {
+        var sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
         var pageable = PageRequest.of(pageNr - 1, 5, sort);
         var page = teacherRepository.findByStudents_Id(studentId, pageable);
-
         var student = studentRepository.findById(studentId);
         student.ifPresent(s -> model.addAttribute("student", s) );
         addPageToModel(model, page, pageNr, sortField, sortDir);
@@ -126,6 +123,40 @@ public class TeacherController {
             teacherRepository.save(teacher.get());
         }
         return viewTeachersOfStudent(studentId, model);
+    }
+
+    @GetMapping("/link")
+    public String prepareToLinkStudentAndTeacher(@RequestParam Long studentId, Model model) {
+        return prepareToLinkStudentAndTeacherPaged(studentId, 1, "secondName", "asc", model);
+    }
+
+    @GetMapping("/link/page/{pageNr}")
+    public String prepareToLinkStudentAndTeacherPaged(@RequestParam Long studentId,
+                                                      @PathVariable Integer pageNr,
+                                                      @RequestParam("sortField") String sortField,
+                                                      @RequestParam("sortDir") String sortDir,
+                                                      Model model) {
+        var sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending();
+        var pageable = PageRequest.of(pageNr - 1, 5, sort);
+        var page = teacherRepository.findAll(pageable);
+        var student = studentRepository.findById(studentId);
+        student.ifPresent(s -> model.addAttribute("student", s) );
+        addPageToModel(model, page, pageNr, sortField, sortDir);
+        return "teachersToLink";
+    }
+
+    @GetMapping("/finalizeLink")
+    public String linkStudentAndTeacher(@RequestParam Long teacherId,
+                                        @RequestParam Long studentId,
+                                        Model model) {
+        var teacher = teacherRepository.findById(teacherId);
+        var student = studentRepository.findById(studentId);
+        if(student.isPresent() && teacher.isPresent()) {
+            teacher.get().getStudents().add(student.get());
+            teacherRepository.save(teacher.get());
+            logger.info("Utworzono połączenie pomiędzy nauczycielem {} a studentem {}", teacherId, studentId);
+        }
+        return viewTeachersOfStudent(teacherId, model);
     }
 
     private void addPageToModel(Model model, Page<Teacher> page, Integer pageNr, String sortField, String sortDir) {
